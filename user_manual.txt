@@ -1,0 +1,169 @@
+NAME
+    logformantsbylabel 
+
+SYNOPSIS
+    python logformantsbylabel [-h] [-s SETTINGS_FILE] [-i] [-v]
+
+
+    optional arguments:
+    -h, --help                 show help message and exit
+    -s SETTINGS_FILE, --settings_file SETTINGS_FILE 
+                               path to settings file
+    -i, --ignore_settings_file ignore settings file; use hard-coded settings
+    -v, --version              show program's version number and exit
+
+DESCRIPTION
+    Looks for sound files and associated textgrids (with matching names) in a
+    given directory, then uses the textgrids to locates intervals by a given
+    label in each sound file. On an interval-by-interval, file-by-file basis,
+    passes the locations to a Praat script (logformantsbylabel.praat) which
+    displays formant information. The Python script then picks up this
+    information from Praat and asks user if this should be logged, or if the
+    formant measuring parameters need to be changed and the analysis performed
+    again. Values are logged in a tab-separated text file.
+    
+
+FILES
+    1.  logformantsbylabel.py
+        Main Python script handling file operations, invoking Praat script via
+        sendpraat.
+
+    2.  getformantsbylabel.praat
+        Praat script measuring formants and displaying spectrograms and spectra.
+
+    3.  settings.cfg (optional)
+        Settings file containing settings used by both scripts above.
+
+    4.  run_logformantsbylabel.bat
+        Windows batch file to invoke the Python script.
+
+    5.  user_manual.txt
+        This manual file. 
+
+    6.  ChangeLog.txt
+        List of changes to code.
+
+REQUIREMENTS
+    Programs:
+        Python 3.0 or newer.  http:///www.python.org
+        Praat 3.6 or newer.   http://www.fon.hum.uva.nl/praat/
+        Sendpraat.            http://www.fon.hum.uva.nl/praat/sendpraat.html
+
+    Operating systems:
+        The scripts have been tested on Windows 7 and Linux (Mint 17), but are
+        expected to run with minimal changes on a variety of Windows and *nix 
+        systems.
+
+    It is recommended that the installed locations of Python, and Sendpraat be
+    added to the system PATH (this can be tested by navigating to a different
+    directory and typing the name of the program). However, the location of
+    Praat is explicitly given to the script in the settings file.
+
+    N.B. The Python code was originally written in Python 2, and should be
+    relatively easy to convert back to this form.
+
+SETTINGS
+    Settings can either be handled by an external settings file (the default
+    option), or by defaults hard-coded into the Python script (invoke script
+    with -i flag).
+
+    Settings in the settings file should be entered in the format 'field_name:
+    value'. Order is unimportant, and whitespace is ignored in everything other
+    than filepaths - however, Praat will not allow spaces in file paths, so
+    data_directory should not contain any spaces in the absolute path. See
+    Appendix for default settings for settings.cfg.
+
+    To specify a different settings file to settings.cfg, invoke the script with
+    -s followed by the path of the file.
+
+PROCESS
+    1.  logformantsbylabel.py first checks any command line arguments and works 
+        out which settings file to use, or takes the settings from its 
+        hard-coded defaults.
+
+    2.  It then checks the data directory for sound and textgrid files. If there 
+        are sound files which don't have matching textgrids, the script exits 
+        with an error.
+
+    3.  If there is already an output file in the directory, the script checks 
+        which of the files it has found have already been processed, and gives 
+        the user the option to either reprocess them (adding new lines to the 
+        output file rather than updating the existing entries), or to skip them.
+
+        If there is no output file, the script generates a new one and gives it
+        a header line.
+
+    4.  The script then reads the textgrid files and stores where the specified
+        intervals appear on the specified tier.
+
+    5.  At this point the script prompts for a sex; there are different male and
+        female default values for formant analysis. These default value sets can
+        be swapped, and individual settings can be changed during analysis.
+
+    6.  The script then starts looping through each relevant interval in each
+        sound file. First it displays information about the current interval and
+        sound. The Python script then passes the current sound file, its
+        textgrid, and current analysis settings to the getformantsbylabel.praat
+        script, which is invoked in the running Praat session by Sendpraat.
+
+    7.  getformantsbylabel.praat opens the sound file and textgrid passed to it,
+        then performs a formant analysis, measuring F1, F2 and F3 at four points
+        across the selected interval. It displays a spectrogram and spectra in
+        the Picture window, and a table of formant values in the Info window.
+
+        The formant data is written to a temporary file that is then picked up
+        by the Python script.
+
+    8.  The Python script then offers the user four choices:
+
+        a) Log formants (enter): The data measured by Praat is written to the
+           output file, and the next interval/sound is processed.
+
+        b) Skip interval (s): The interval is not logged, and the next
+           interval/sound is processed.
+
+        c) Change a setting (c): The user is presented with a numerical menu of
+           analysis settings that can be changed, and can enter a number to
+           change the corresponding setting, or enter (m) or (f) to reload the
+           male or female sex. Once the user leaves this menu, step 7 is
+           repeated with the current sound and the changed settings.
+
+        d) Quit (q): The script ends.
+
+    9.  The script loops back to step 6 until all intervals are either logged or
+        skipped.
+
+APPENDIX: Default settings for settings.cfg
+    data_directory:            Data
+    interval_label:            V
+    output_file_name:          formant_tenths.txt
+    play_sound:                True
+    praat_script_path:         getformantsbylabel.praat
+    sendpraat_path:            sendpraat
+    sound_extension:           .wav
+    spectrogram_window_length: 0.005
+    temporary_file_name:       praat_output.tmp
+    textgrid_extension:        .TextGrid
+    textgrid_tier:             1
+
+    male_f1_reference:         5000
+    male_f2_reference:         1485
+    male_f3_reference:         2475
+    male_f4_reference:         3465
+    male_f5_reference:         4455
+    male_frequency_cost:       1
+    male_bandwidth_cost:       1
+    male_transition_cost:      1
+    female_f1_reference:       5500
+    female_f2_reference:       1650
+    female_f3_reference:       2750
+    female_f4_reference:       3850
+    female_f5_reference:       4950
+    female_frequency_cost:     1
+    female_bandwidth_cost:     1
+    female_transition_cost:    1
+
+AUTHOR
+    Chris Norton <cwnorton@gmail.com>.
+
+                                   2016-12-12
