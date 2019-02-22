@@ -1,0 +1,53 @@
+2019-02-15  Chris Norton  <cwnorton@gmail.com>
+    * logformantsbylabel.py (main): Fixed bug reading in settings, whereby if a value had a colon in it that value would be chopped up incorrectly.
+
+    * logformantsbylabel.py: Removed deprecated 'U' mode on `open` commands.
+	Put imports on separate lines.
+
+    * All files: Changed file format to DOS.
+
+2016-12-12  Chris Norton  <cwnorton@gmail.com>
+    * user_manual.txt (DESCRIPTION): Added description (taken from logformantsbylabel.py).
+
+2014-12-08  Chris Norton  <cwnorton@gmail.com>
+
+    * logformantsbylabel.py (get_files_by_ext): Added check to see if directory exists.
+
+    * logformantsbylabel.py (main): Removed praat_path variable; we only need to know where sendpraat is.
+    Added checks for file paths of sendpraat and the Praat script.
+    Changed default filenames, logformantsbylabel.cfg to settings.cfg, logformantsbylabel.praat to getformantsbylabel.praat.
+    Added check to see if the script is being run in Python 3.
+    Delete the Praat temporary file when the Python script finishes successfully.
+
+    * getformantsbylabel.praat: Renamed this file from logformantsbylabel.praat.
+
+    * settings.cfg: Renamed this file from logformantsbylabel.cfg.
+
+    * user_manual.txt: Renamed this file from logformantsbylabel_man.txt.
+
+2014-08-15  Chris Norton  <cwnorton@gmail.com>
+
+    * logformantsbylabel.py (main): Made formant measuring start at 0%.
+
+    * logformantsbylabel.praat: Made formant measuring start at 0%.
+
+2014-08-14  Chris Norton  <cwnorton@gmail.com>
+
+    * logformantsbylabel.py (global): Changed output_file_name from F1-F3quarts.txt to formant_tenths.txt, as the Praat script measures 10ths instead of quarters now.
+    (main): Made filename, sound no. and interval no. output all line up.
+    Changed output written to main output file to include new measurements at intervals of 10%.
+    Removed code that auto-detects/starts Praat.
+    Added check to see whether, when ignoring previously logged files, there are any actual files to process or not.
+
+    * logformantsbylabel.praat: Changed formatting of formant table written to Praat info window.
+    Removed 'Tracker output' line of text with mid-point formant values from spectrogram picture; this information (and more) is given in the Info window.
+    Changed output written to temporary file to include new measurements at intervals of 10%.
+
+    * logformantsbylabel.cfg: Changed output_file_name from F1-F3quarts.txt to formant_tenths.txt.
+
+    * logformantsbylabel_man.txt (appendix): Updated config file copy so output_file_name is formant_tenths.txt.
+    Removed references to Python code autodetecting/running Praat.
+
+2014-08-13  Chris Norton  <cwnorton@gmail.com>
+
+    * logformantsbylabel_man.txt (settings): Added warning about Praat not accepting filepaths with spaces in them.
